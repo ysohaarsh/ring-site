@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#050805">
+    <meta name="description" content="Harsh Yadav makes things with code from India: 3D worlds, live maps, pixel games.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Harsh Yadav">
+    <meta property="og:description" content="Harsh Yadav makes things with code from India: 3D worlds, live maps, pixel games.">
+    <title>Harsh Yadav</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050805'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%233dff7c' stroke-width='4' stroke-dasharray='3 2.5'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <canvas class="stage" role="img" aria-label="Harsh Yadav"></canvas>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <!-- Readable copy of the ring for screen readers and no-JS. main.js keeps it in sync with PROFILE. -->
+    <main class="sr-only">
+      <h1 data-profile="name">Harsh Yadav</h1>
+      <p data-profile="ring">Harsh Yadav makes things with code from India: 3D worlds, live maps, pixel games. One commit a day.</p>
+    </main>
+
+    <div class="hud" aria-live="polite">
+      <span class="hud-timer">:15</span>
+      <span class="hud-score">0</span>
+    </div>
+    <div class="burst" aria-hidden="true">+1</div>
+
+    <section class="end-card" role="dialog" aria-modal="true" aria-labelledby="end-title" hidden>
+      <div class="end-panel">
+        <p class="end-prompt" aria-hidden="true">$ ./air-hockey --result</p>
+        <h2 id="end-title">
+          <span class="end-score">0</span>
+          <span class="end-label">goals</span>
+        </h2>
+        <p class="end-sub">in 15 seconds</p>
+
+        <section class="board" aria-labelledby="board-title">
+          <div class="board-head">
+            <h3 id="board-title">leaderboard</h3>
+            <span>goals</span>
+          </div>
+          <ol class="board-list"></ol>
+          <form class="board-form" hidden novalidate>
+            <label id="initials-label">sign with your initials</label>
+            <div class="initials-row">
+              <div class="initials" role="group" aria-labelledby="initials-label">
+                <input aria-label="First initial" maxlength="1" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
+                <input aria-label="Second initial" maxlength="1" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
+                <input aria-label="Third initial" maxlength="1" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
+              </div>
+              <button class="board-submit" type="submit">sign</button>
+            </div>
+          </form>
+          <p class="board-status" role="status"></p>
+        </section>
+
+        <div class="end-actions">
+          <button class="end-replay" type="button">play again</button>
+          <button class="end-done" type="button">done</button>
+        </div>
+        <p class="end-tagline" data-profile="tagline">You don't have to go home but you can't stay here.</p>
+      </div>
+    </section>
+
+    <p class="hint" aria-hidden="true"><span class="hint-prompt">harsh@web:~$</span> <span class="hint-text">drag · squeeze into a wall · double-click to play</span></p>
+    <button class="sound" type="button" aria-pressed="true">[sound on]</button>
+
+    <!-- Shown only with ?tweaks in the URL. -->
+    <details class="tweaks" hidden>
+      <summary>game</summary>
+      <div class="tweaks-grid">
+        <label>
+          goal size <output data-out="goalSize">2.00×</output>
+          <input type="range" data-tweak="goalSize" min="1.25" max="3" step="0.05" value="2">
+        </label>
+        <label>
+          puck friction <output data-out="puckFriction">1.2%</output>
+          <input type="range" data-tweak="puckFriction" min="0" max="0.04" step="0.001" value="0.012">
+        </label>
+        <div class="tweaks-actions">
+          <button class="tweaks-save" type="button">save</button>
+          <button class="tweaks-reset" type="button">reset</button>
+        </div>
+      </div>
+    </details>
+
+    <script src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,482 @@
+:root {
+  --bg: #050805;
+  --fg: #3dff7c;
+  --glow: rgba(61, 255, 124, 0.45);
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  outline: none;
+}
+
+/* Phosphor bloom. Skipped on touch devices, where the filter costs frames. */
+@media (hover: hover) and (pointer: fine) {
+  .stage {
+    filter: drop-shadow(0 0 7px var(--glow));
+  }
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 2px,
+    rgba(0, 0, 0, 0.13) 2px 3px
+  );
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── bottom status line ───────────────────────────── */
+
+.hint {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  right: 132px;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 3;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.62;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.hint-prompt {
+  opacity: 0.6;
+}
+
+.hint-text::after {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 0.35em;
+  vertical-align: -0.18em;
+  background: currentColor;
+  animation: blink 1.06s steps(1) infinite;
+}
+
+body.is-busy .hint {
+  opacity: 0;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+.sound {
+  position: fixed;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(2px, env(safe-area-inset-bottom));
+  z-index: 3;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  font-size: 12px;
+  background: none;
+  border: 0;
+  opacity: 0.62;
+  cursor: pointer;
+}
+
+.sound:hover {
+  opacity: 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* ── air hockey HUD ───────────────────────────────── */
+
+.hud {
+  position: fixed;
+  top: max(34px, calc(env(safe-area-inset-top) + 30px));
+  left: 50%;
+  z-index: 3;
+  display: none;
+  gap: 1.6em;
+  font-size: clamp(22px, 5vw, 34px);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+body.hockey .hud {
+  display: flex;
+}
+
+.hud-timer {
+  opacity: 0.6;
+}
+
+.hud.is-urgent .hud-timer {
+  opacity: 1;
+  animation: blink 0.5s steps(1) infinite;
+}
+
+.burst {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  z-index: 3;
+  font-size: clamp(28px, 7vw, 46px);
+  line-height: 1;
+  opacity: 0;
+  transform: translate(-50%, 0);
+  pointer-events: none;
+}
+
+.burst.is-live {
+  animation: burst 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -18px) scale(0.6);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 34px) scale(1);
+  }
+}
+
+/* ── end card ─────────────────────────────────────── */
+
+.end-card {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  user-select: text;
+  -webkit-user-select: text;
+  animation: card-in 0.22s ease both;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.end-panel {
+  width: min(360px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 22px 22px 18px;
+  background: var(--bg);
+  border: 1px solid var(--fg);
+  box-shadow: 6px 6px 0 var(--fg);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.end-prompt {
+  margin: 0 0 14px;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.end-panel h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.end-score {
+  font-size: 64px;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.end-sub {
+  margin: 4px 0 18px;
+  opacity: 0.6;
+}
+
+.board {
+  padding-top: 12px;
+  border-top: 1px dashed var(--fg);
+}
+
+.board-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.board-head h3 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 500;
+}
+
+.board-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.board-list li {
+  display: flex;
+  gap: 1em;
+  padding: 1px 6px;
+  margin: 0 -6px;
+}
+
+.board-list .rank {
+  opacity: 0.5;
+}
+
+.board-list .score {
+  margin-left: auto;
+}
+
+.board-list .is-new {
+  color: var(--bg);
+  background: var(--fg);
+}
+
+.board-list .is-new .rank {
+  opacity: 0.7;
+}
+
+.board-list .is-empty {
+  opacity: 0.6;
+}
+
+.board-form {
+  margin-top: 14px;
+}
+
+.board-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.initials-row {
+  display: flex;
+  gap: 10px;
+}
+
+.initials {
+  display: flex;
+  gap: 6px;
+}
+
+.initials input {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--fg);
+  border-radius: 0;
+  caret-color: var(--fg);
+}
+
+.end-card button {
+  min-height: 44px;
+  padding: 0 16px;
+  color: var(--bg);
+  background: var(--fg);
+  border: 1px solid var(--fg);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.end-card button:hover {
+  color: var(--fg);
+  background: transparent;
+}
+
+.end-card .end-done {
+  color: var(--fg);
+  background: transparent;
+}
+
+.end-card .end-done:hover {
+  color: var(--bg);
+  background: var(--fg);
+}
+
+.board-submit {
+  flex: 1;
+}
+
+.board-status {
+  min-height: 1.5em;
+  margin: 6px 0 0;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.end-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.end-actions button {
+  flex: 1;
+}
+
+.end-tagline {
+  margin: 16px 0 0;
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+/* ── tweaks (only with ?tweaks) ───────────────────── */
+
+.tweaks {
+  position: fixed;
+  right: 10px;
+  bottom: 52px;
+  z-index: 4;
+  width: 220px;
+  padding: 8px 10px;
+  font-size: 12px;
+  background: var(--bg);
+  border: 1px solid var(--fg);
+}
+
+.tweaks summary {
+  cursor: pointer;
+}
+
+.tweaks-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tweaks label {
+  display: grid;
+  gap: 4px;
+}
+
+.tweaks output {
+  float: right;
+  opacity: 0.6;
+}
+
+.tweaks input[type="range"] {
+  width: 100%;
+  accent-color: var(--fg);
+}
+
+.tweaks-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tweaks-actions button {
+  flex: 1;
+  min-height: 30px;
+  background: transparent;
+  border: 1px solid var(--fg);
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .hint {
+    font-size: 11px;
+  }
+
+  .hint-prompt {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint-text::after,
+  .hud.is-urgent .hud-timer {
+    animation: none;
+  }
+
+  .end-card {
+    animation: none;
+  }
+}
